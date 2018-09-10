@@ -51,10 +51,9 @@ int compar(const void* x1, const void* x2){
 }
 
 Data* create_data(char* name, char* type,char* edge,int dimension, City** cities){
-    Data* x = malloc(sizeof(x));
+    Data* x = malloc(sizeof(*x));
 
-    x->name = malloc(sizeof(char)*(strlen(name)+1));
-    strcpy(x->name, name);
+    x->name = strdup(name);
     strcpy(x->type, type);
     x->dimension = dimension;
     x->node_coord_section = cities;
@@ -64,7 +63,7 @@ Data* create_data(char* name, char* type,char* edge,int dimension, City** cities
 }
 
 City* create_city(int id, int x, int y){
-    City* b = malloc(sizeof(b));
+    City* b = malloc(sizeof(*b));
 
     b->id = id;
     b->x = x;
@@ -105,14 +104,13 @@ Data* read_data(FILE* archive){
 
 // os pesos são as distancias entre nós
 
-
 int main(int argc, char** argv){
     FILE* x = fopen(argv[1],"r");
     Data* y = read_data(x);
     Edge* b = make_edges(y);
 
     qsort(b,number_of_edges(y->dimension),sizeof(Edge),compar);
-     // for(int i = 0; i < 500; i++){
-     //     printf("%d \n",b[i].dist);
-     // }
+    for(int i = 0; i < 500; i++){
+      printf("%d \n",b[i].dist);
+    }
 }
