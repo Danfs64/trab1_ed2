@@ -1,5 +1,7 @@
 #include "beta.h"
 
+#define distance(v1,v2) round(sqrt(pow((v2->x - v1->x),2) + pow((v2->y - v1->y),2)))
+#define number_of_edges(n) ((n/2)*(n-1))+(((n-1)/2)*((n%2) != 0))
 #define Default 30
 
 struct data{
@@ -20,19 +22,11 @@ struct edge{
     int dist;
 };
 
-int number_of_edges(int dimension){
-    int amount = 0;
-    for(int i = 1; i < dimension; i++){
-        amount += i;
-    }
-    return amount;
-}
-
 Edge* make_edges(Data* x){
     int index = 0, h = number_of_edges(x->dimension);
     Edge* y = malloc(sizeof(Edge)*h);
 
-    for(int i = 0; i < x->dimension -1; i++){
+    for(int i = 0; i < (x->dimension - 1); i++){
         for(int j = i+1; j < x->dimension; j++){
             y[index].dist = distance(x->node_coord_section[i],x->node_coord_section[j]);
 
@@ -109,8 +103,20 @@ int main(int argc, char** argv){
     Data* y = read_data(x);
     Edge* b = make_edges(y);
 
+    Edge* necessary = malloc(sizeof(Edge)*(y->dimension-1));
+    int index = 0;
+
     qsort(b,number_of_edges(y->dimension),sizeof(Edge),compar);
-    for(int i = 0; i < 500; i++){
-      printf("%d \n",b[i].dist);
+
+    UF_init(y->dimension);
+
+    for(int i = 0; i < number_of_edges(y->dimension); i++){
+
+        if(UF_union(b[i].x1->id, b[i].x2->id)){
+            necessary[index] = b[i];
+            index++;
+            if(index == (y->dimension-1)) break;
+        }
     }
+
 }
