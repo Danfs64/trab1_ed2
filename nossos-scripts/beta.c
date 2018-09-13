@@ -20,6 +20,7 @@ struct city_node{
 struct edge{
     City* x1, *x2;
     int dist;
+    int check;
 };
 
 Edge* make_edges(Data* x){
@@ -33,6 +34,7 @@ Edge* make_edges(Data* x){
             y[index].x1 = x->node_coord_section[i];
 
             y[index].x2 = x->node_coord_section[j];
+            y[index].check = 0;
             index++;
         }
     }
@@ -96,6 +98,35 @@ Data* read_data(FILE* archive){
     return a;
 }
 
+// int verified(Edge* x, int n){
+//     for(int i = 0; i < n; i++){
+//         if(x[i].check == 0){
+//             return 0;
+//         }
+//     }
+//     return 1;
+// }
+//
+// void tour(Edge* x, int n){
+//     Edge* m = NULL;
+//     Stack* st = create_Empty_Stack();
+//     push(x,st);
+//
+//     while(!is_Empty_Stack(st)){
+//         m = (Edge*)pop(st);
+//         m->check = 1;
+//         printf("%d -- %d\n\n\n", m->x1->id, m->x2->id);
+//         for(int i = 0; i < n; i++){
+//             //printf("%d -- %d\n",x[i].x1->id, x[i].x2->id);
+//             if(m->check == 0 && x[i].x1 == m->x2){
+//                 push(&x[i],st);
+//             }
+//         }
+//
+//
+//     }
+// }
+
 // os pesos são as distancias entre nós
 
 int main(int argc, char** argv){
@@ -118,5 +149,7 @@ int main(int argc, char** argv){
             if(index == (y->dimension-1)) break;
         }
     }
+
+    tour(necessary,y->dimension-1);
 
 }

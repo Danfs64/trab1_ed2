@@ -3,6 +3,7 @@
 #include <string.h>
 #include <math.h>
 #include "quick.h"
+#include "stack.h"
 
 typedef struct data Data;
 typedef struct city_node City;
