@@ -23,17 +23,20 @@ struct edge{
     int check;
 };
 
+static int compar(const void* x1, const void* x2){
+  return ((Edge*)x1)->dist > ((Edge*)x2)->dist? 1:0;
+}
+
 Edge* make_edges(Data* x){
     int index = 0, h = number_of_edges(x->dimension);
     Edge* y = malloc(sizeof(Edge)*h);
 
     for(int i = 0; i < (x->dimension - 1); i++){
         for(int j = i+1; j < x->dimension; j++){
+            y[index].x1 = x->node_coord_section[i];
+            y[index].x2 = x->node_coord_section[j];
             y[index].dist = distance(x->node_coord_section[i],x->node_coord_section[j]);
 
-            y[index].x1 = x->node_coord_section[i];
-
-            y[index].x2 = x->node_coord_section[j];
             y[index].check = 0;
             index++;
         }
@@ -42,30 +45,26 @@ Edge* make_edges(Data* x){
     return y;
 }
 
-int compar(const void* x1, const void* x2){
-    return ((Edge*)x1)->dist > ((Edge*)x2)->dist? 1:0;
+City* create_city(int id, int x, int y){
+  City* b = malloc(sizeof(*b));
+
+  b->id = id;
+  b->x = x;
+  b->y = y;
+
+  return b;
 }
 
-Data* create_data(char* name, char* type,char* edge,int dimension, City** cities){
+Data* create_data(char* name, char* type, char* edge, int dimension, City** cities){
     Data* x = malloc(sizeof(*x));
 
     x->name = strdup(name);
     strcpy(x->type, type);
     x->dimension = dimension;
-    x->node_coord_section = cities;
     strcpy(x->edge_weight_dimension, edge);
+    x->node_coord_section = cities;
 
     return x;
-}
-
-City* create_city(int id, int x, int y){
-    City* b = malloc(sizeof(*b));
-
-    b->id = id;
-    b->x = x;
-    b->y = y;
-
-    return b;
 }
 
 Data* read_data(FILE* archive){
@@ -82,11 +81,11 @@ Data* read_data(FILE* archive){
     fscanf(archive, "%s\n", type);
 
     fscanf(archive, "%s %d\n", trash, &dimension);
-    c = malloc(sizeof(City*)*dimension);
 
     fscanf(archive, "%s %s\n", trash,edge);
     fscanf(archive, "%s\n",trash);
 
+    c = malloc(sizeof(City*)*dimension);
     for(int i = 0; i < dimension; i++){
         fscanf(archive, "%d %f %f\n", &id, &x, &y);
         c[i] = create_city(id,x,y);
@@ -96,6 +95,17 @@ Data* read_data(FILE* archive){
     Data* a = create_data(name,type,edge,dimension,c);
 
     return a;
+}
+
+Data* clear_data(Data* data) {
+  for (int i = 0; i < data->dimension; i++) {
+    free(data->node_coord_section[i]);
+  }
+  free(data->node_coord_section);
+  free(data->name);
+  free(data);
+
+  return NULL;
 }
 
 // int verified(Edge* x, int n){
@@ -130,19 +140,18 @@ Data* read_data(FILE* archive){
 // os pesos são as distancias entre nós
 
 int main(int argc, char** argv){
+    //Abre o arquivo e cria as estruturas necessárias inicialmente
     FILE* x = fopen(argv[1],"r");
     Data* y = read_data(x);
     Edge* b = make_edges(y);
-
     Edge* necessary = malloc(sizeof(Edge)*(y->dimension-1));
-    int index = 0;
-
+    //Ordena o vetor de aresta 'b' não-decrescentemente
     qsort(b,number_of_edges(y->dimension),sizeof(Edge),compar);
 
     UF_init(y->dimension);
 
+    int index = 0;
     for(int i = 0; i < number_of_edges(y->dimension); i++){
-
         if(UF_union(b[i].x1->id, b[i].x2->id)){
             necessary[index] = b[i];
             index++;
@@ -150,6 +159,14 @@ int main(int argc, char** argv){
         }
     }
 
-    tour(necessary,y->dimension-1);
+    //tour(necessary,y->dimension-1);
 
+    //Libera toda a memória alocada no programa
+    y = clear_data(y);
+    free(b);
+    free(necessary);
+    fclose(x);
+    quick_free();
+
+    return 0;
 }
