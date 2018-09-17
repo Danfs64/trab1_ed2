@@ -10,5 +10,6 @@
 *.la
 *.lo
 
-# Executável de teste
+# Executável/saídas de teste
 *trab1
+*.mst

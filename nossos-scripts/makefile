@@ -15,9 +15,9 @@ quick.o: quick.c
 stack.o: stack.c
 	gcc -c stack.c -lm -g -Wall
 
-#Limpa todos os .o e os arquivos de saída
+#Limpa todos os .o
 clean:
-	rm *.o out/*
+	rm *.o
 
 #Roda o programa com o exemplo berlin52.tsp
 run: trab1 clean

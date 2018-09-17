@@ -33,8 +33,9 @@ int UF_union(int p,int q) {
     int j = UF_find(q);
     // Profundidade de ? acessos.
     if(i == j) return 0;
+    
     if(sz[i] < sz[j]) { id[i] = j; sz[j] += sz[i]; }
-    else { id[j] = i; sz[i] += sz[j]; }
+    else              { id[j] = i; sz[i] += sz[j]; }
     return 1;
 }
 

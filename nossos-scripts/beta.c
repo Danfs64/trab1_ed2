@@ -4,6 +4,7 @@
 #define number_of_edges(n) ((n/2)*(n-1))+(((n-1)/2)*((n%2) != 0))
 #define Default 30
 
+//Estrutura que armazena todas as informações do problema
 struct data{
     char* name;
     char type[4];
@@ -11,22 +12,24 @@ struct data{
     char edge_weight_dimension[7];
     City** node_coord_section;
 };
-
+//Estrutura que representa uma cidade, contem o id e as coordenadas
 struct city_node{
     int id;
     float x, y;
 };
-
+//Estrutura que representa uma aresta da mst, com suas arestas e seu peso
 struct edge{
     int x1, x2;
     int dist;
     int check;
 };
 
+//Função de comparação para o quicksort
 static int compar(const void* x1, const void* x2){
   return ((Edge*)x1)->dist > ((Edge*)x2)->dist? 1:0;
 }
 
+//Gera o vetor com todas as aresta possíveis de um problema
 Edge* make_edges(Data* x){
     int index = 0, h = number_of_edges(x->dimension);
     Edge* y = malloc(sizeof(Edge)*h);
@@ -44,7 +47,7 @@ Edge* make_edges(Data* x){
 
     return y;
 }
-
+//Cria um struct de cidade
 City* create_city(int id, int x, int y){
   City* b = malloc(sizeof(*b));
 
@@ -54,7 +57,7 @@ City* create_city(int id, int x, int y){
 
   return b;
 }
-
+//Cria o struct principal do problema
 Data* create_data(char* name, char* type, char* edge, int dimension, City** cities){
     Data* x = malloc(sizeof(*x));
 
@@ -66,7 +69,7 @@ Data* create_data(char* name, char* type, char* edge, int dimension, City** citi
 
     return x;
 }
-
+//Lê as informações do problema de um arquivo, gera e retorna o struct
 Data* read_data(FILE* archive){
     char trash[Default], name[Default], edge[Default], type[Default];
     int dimension, id;
@@ -96,7 +99,7 @@ Data* read_data(FILE* archive){
 
     return a;
 }
-
+//Libera toda a memória usada por um Data
 Data* clear_data(Data* data) {
   for (int i = 0; i < data->dimension; i++) {
     free(data->node_coord_section[i]);
@@ -107,18 +110,23 @@ Data* clear_data(Data* data) {
 
   return NULL;
 }
-
+//Cria um arquivo de saída com a MST
 void print_mst(Data* data, Edge* nec) {
   char name[Default];
   strcpy(name, "mst/");
   strcat(name, data->name);
   strcat(name, ".mst");
+  FILE* arq = fopen(name, "w+");
 
-  FILE* arq = fopen(name, "w");
+  fprintf(arq, "NAME: %s\nTYPE: MST\nDIMENSION: %d\nMST_SECTION\n",
+                      data->name, data->dimension);
 
-  fprintf(arq, "NAME: %s\nTYPE: %s\nDIMENSION: %d\nMST_SECTION\n", data->name, data->type, data->dimension);
+  for (int i = 0; i < data->dimension-1; i++) {
+    fprintf(arq, "%d %d\n", nec[i].x1, nec[i].x2);
+  }
+  fprintf(arq, "EOF\n");
 
-
+  fclose(arq);
 }
 
 int verified(Edge* x, int n){
@@ -171,6 +179,8 @@ int main(int argc, char** argv){
             if(index == (y->dimension-1)) break;
         }
     }
+
+    print_mst(y, necessary);
 
     //tour(necessary,y->dimension-1);
 
