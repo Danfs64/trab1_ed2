@@ -7,5 +7,6 @@
 void UF_init(int size);
 int UF_find(int i);
 int UF_union(int p,int q);
+void quick_free();
 
 #endif

@@ -11,6 +11,6 @@ Stack* create_Empty_Stack();
 void push(void*, Stack*);
 void* pop(Stack*);
 int is_Empty_Stack(Stack*);
-void free_Stack(Stack* x);
+void free_Stack(Stack*);
 
 #endif

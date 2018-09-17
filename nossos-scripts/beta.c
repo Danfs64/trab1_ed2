@@ -1,6 +1,5 @@
 #include "beta.h"
 
-#define double meh
 #define distance(v1,v2) round(sqrt(pow((v2->x - v1->x),2) + pow((v2->y - v1->y),2)))
 #define number_of_edges(n) ((n/2)*(n-1))+(((n-1)/2)*((n%2) != 0))
 #define Default 30
@@ -19,7 +18,7 @@ struct city_node{
 };
 
 struct edge{
-    City* x1, *x2;
+    int x1, x2;
     int dist;
     int check;
 };
@@ -34,8 +33,8 @@ Edge* make_edges(Data* x){
 
     for(int i = 0; i < (x->dimension - 1); i++){
         for(int j = i+1; j < x->dimension; j++){
-            y[index].x1 = x->node_coord_section[i];
-            y[index].x2 = x->node_coord_section[j];
+            y[index].x1 = x->node_coord_section[i]->id;
+            y[index].x2 = x->node_coord_section[j]->id;
             y[index].dist = distance(x->node_coord_section[i],x->node_coord_section[j]);
 
             y[index].check = 0;
@@ -109,14 +108,14 @@ Data* clear_data(Data* data) {
   return NULL;
 }
 
-// int verified(Edge* x, int n){
-//     for(int i = 0; i < n; i++){
-//         if(x[i].check == 0){
-//             return 0;
-//         }
-//     }
-//     return 1;
-// }
+int verified(Edge* x, int n){
+    for(int i = 0; i < n; i++){
+        if(x[i].check == 0){
+            return 0;
+        }
+    }
+    return 1;
+}
 //
 // void tour(Edge* x, int n){
 //     Edge* m = NULL;
@@ -153,7 +152,7 @@ int main(int argc, char** argv){
 
     int index = 0;
     for(int i = 0; i < number_of_edges(y->dimension); i++){
-        if(UF_union(b[i].x1->id, b[i].x2->id)){
+        if(UF_union(b[i].x1, b[i].x2)){
             necessary[index] = b[i];
             index++;
             if(index == (y->dimension-1)) break;
@@ -163,11 +162,12 @@ int main(int argc, char** argv){
     //tour(necessary,y->dimension-1);
 
     //Libera toda a memória alocada no programa
-    y = clear_data(y);
+    clear_data(y);
+    quick_free();
     free(b);
     free(necessary);
     fclose(x);
-    quick_free();
+
 
     return 0;
 }
