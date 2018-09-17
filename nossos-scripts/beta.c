@@ -108,6 +108,19 @@ Data* clear_data(Data* data) {
   return NULL;
 }
 
+void print_mst(Data* data, Edge* nec) {
+  char name[Default];
+  strcpy(name, "mst/");
+  strcat(name, data->name);
+  strcat(name, ".mst");
+
+  FILE* arq = fopen(name, "w");
+
+  fprintf(arq, "NAME: %s\nTYPE: %s\nDIMENSION: %d\nMST_SECTION\n", data->name, data->type, data->dimension);
+
+
+}
+
 int verified(Edge* x, int n){
     for(int i = 0; i < n; i++){
         if(x[i].check == 0){
@@ -116,7 +129,7 @@ int verified(Edge* x, int n){
     }
     return 1;
 }
-//
+
 // void tour(Edge* x, int n){
 //     Edge* m = NULL;
 //     Stack* st = create_Empty_Stack();
