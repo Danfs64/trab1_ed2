@@ -1,5 +1,6 @@
 #include "beta.h"
 
+#define double meh
 #define distance(v1,v2) round(sqrt(pow((v2->x - v1->x),2) + pow((v2->y - v1->y),2)))
 #define number_of_edges(n) ((n/2)*(n-1))+(((n-1)/2)*((n%2) != 0))
 #define Default 30
