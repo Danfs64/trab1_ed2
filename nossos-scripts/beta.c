@@ -164,6 +164,49 @@ void tour(Edge* x, int n){
     }
 }
 
+//versao alternativa da função de tour
+//só fiz separada pra não alterar a ideia tu estava colocando em pratica acima
+void tr(Edge* x, int n){
+    Edge* m;    //Variável que receberá as arestas
+    // int id;     //Variável que armazenará a cidade "atual"
+    Stack* st = create_Empty_Stack();
+    printf("%d\n%d\n",x[0].x1,x[0].x2);
+    push(&x[1],st); //Insere uma aresta arbitrária na
+    int last = x->x2;;
+
+    while(!verified(x,n)){
+        int reverse = 1;
+        if(!is_Empty_Stack(st)){
+            m = (Edge*)pop(st);
+            m->check = 1;
+            if(last == m->x1){
+                printf("%d\n",m->x2);
+                last = m->x2;
+            }else{
+                printf("%d\n",m->x1);
+                last = m->x1;
+            }
+        }
+
+        for(int i = 0; i < n; i++){
+            if(last == x[i].x1){
+                push(&x[i],st);
+                reverse = 0;
+            }
+        }
+
+        if(reverse){
+            for(int i = 0; i < n; i++){
+                if(last == x[i].x2 && x[i].check == 0){
+                    push(&x[i],st);
+                }else if(last == x[i].x2 && x[i].check == 1){
+                    last = x[i].x1;
+                }
+            }
+        }
+    }
+
+}
 // os pesos são as distancias entre nós
 
 int main(int argc, char** argv){
@@ -188,7 +231,8 @@ int main(int argc, char** argv){
 
     print_mst(y, mst);
 
-    tour(mst,y->dimension-1);
+    //tour(mst,y->dimension-1);
+    tr(mst,y->dimension-1);
 
     //Libera toda a memória alocada no programa
     clear_data(y);
