@@ -166,6 +166,7 @@ void tour(Edge* x, int n){
 
 //versao alternativa da função de tour
 //só fiz separada pra não alterar a ideia tu estava colocando em pratica acima
+//obs: dps de printar até a cidade 161 corretamente erra mizeravelmente a prox. cidade antes de entrar em loop
 void tr(Edge* x, int n){
     Edge* m;    //Variável que receberá as arestas
     // int id;     //Variável que armazenará a cidade "atual"
@@ -174,6 +175,7 @@ void tr(Edge* x, int n){
     push(x,st); //Insere uma aresta arbitrária na
     int last = x[0].x1;
     int d = 0;
+    
     while(!verified(x,n)){
         int reverse = 1;
         if(!is_Empty_Stack(st)){
@@ -188,7 +190,7 @@ void tr(Edge* x, int n){
             }
         }
 
-        //alimenta a pilha com arestas cuja coordenada x1 é igual a ultima cidade visitada
+        //alimenta a pilha com arestas cuja coordenada x1 é igual a ultima cidade visitada e que já não foram visitadas
         for(int i = 0; i < n; i++){
             if(last == x[i].x1 && x[0].check == 0){
                 push(&x[i],st);
@@ -196,12 +198,16 @@ void tr(Edge* x, int n){
             }
         }
 
+        //alimenta a pilha com arestas cuja coordenada x2 é igual a ultima cidade visitada
         if(reverse){
             for(int i = 0; i < n; i++){
+                //caso a aresta ainda nao tenha sido visitada coloque na pilha,
+                //do contrario diga que a ultima cidade visitada é a cidade x1 da aresta que está sendo observada
                 if(last == x[i].x2 && x[i].check == 0){
                     push(&x[i],st);
                 }else if(last == x[i].x2 && x[i].check == 1){
                     last = x[i].x1;
+                    i = 0;
                 }
             }
         }
