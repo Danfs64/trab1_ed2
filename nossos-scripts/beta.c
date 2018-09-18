@@ -170,10 +170,10 @@ void tr(Edge* x, int n){
     Edge* m;    //Variável que receberá as arestas
     // int id;     //Variável que armazenará a cidade "atual"
     Stack* st = create_Empty_Stack();
-    printf("%d\n%d\n",x[0].x1,x[0].x2);
-    push(&x[1],st); //Insere uma aresta arbitrária na
-    int last = x->x2;;
-
+    printf("%d\n",x[0].x1);
+    push(x,st); //Insere uma aresta arbitrária na
+    int last = x[0].x1;
+    int d = 0;
     while(!verified(x,n)){
         int reverse = 1;
         if(!is_Empty_Stack(st)){
@@ -188,8 +188,9 @@ void tr(Edge* x, int n){
             }
         }
 
+        //alimenta a pilha com arestas cuja coordenada x1 é igual a ultima cidade visitada
         for(int i = 0; i < n; i++){
-            if(last == x[i].x1){
+            if(last == x[i].x1 && x[0].check == 0){
                 push(&x[i],st);
                 reverse = 0;
             }
@@ -204,6 +205,10 @@ void tr(Edge* x, int n){
                 }
             }
         }
+        // if(d == 10){
+        //     break;
+        // }
+        // d++;
     }
 
 }
