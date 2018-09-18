@@ -4,6 +4,7 @@
 #include <math.h>
 #include "quick.h"
 #include "stack.h"
+#include "linkedList.h"
 
 typedef struct data Data;
 typedef struct city_node City;

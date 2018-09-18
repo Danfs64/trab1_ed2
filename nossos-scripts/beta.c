@@ -138,25 +138,31 @@ int verified(Edge* x, int n){
     return 1;
 }
 
-// void tour(Edge* x, int n){
-//     Edge* m = NULL;
-//     Stack* st = create_Empty_Stack();
-//     push(x,st);
-//
-//     while(!is_Empty_Stack(st)){
-//         m = (Edge*)pop(st);
-//         m->check = 1;
-//         printf("%d -- %d\n\n\n", m->x1->id, m->x2->id);
-//         for(int i = 0; i < n; i++){
-//             //printf("%d -- %d\n",x[i].x1->id, x[i].x2->id);
-//             if(m->check == 0 && x[i].x1 == m->x2){
-//                 push(&x[i],st);
-//             }
-//         }
-//
-//
-//     }
-// }
+void tour(Edge* x, int n){
+    Edge* m;    //Variável que receberá as arestas
+    // int id;     //Variável que armazenará a cidade "atual"
+    Stack* st = create_Empty_Stack();
+    push(x,st); //Insere uma aresta arbitrária na pilha
+
+    while(!is_Empty_Stack(st)){
+        m = (Edge*)pop(st); //Pega a aresta analizada;
+        m->check = 1;       //Coloca ela como checada;
+        // id = m->x2;         //Cidade "atual" é o x2 da aresta;
+        printf("%d -- %d\n\n\n", m->x1, m->x2);
+        for(int i = 0; i < n; i++){
+            printf("%d -- %d; check = %d\n",x[i].x1, x[i].x2, x[i].check);
+            if(m->check == 0 && (m->x1 == x[i].x2 || m->x2 == x[i].x2 ||
+                                 m->x1 == x[i].x1 || m->x2 == x[i].x1) ) {
+                // if (x[i].x1 == id) {
+                //     id = x[i].x2;
+                //     x[i].x2 = x[i].x1;
+                //     x[i].x1 = id;
+                // }
+                push(&x[i],st);
+            }
+        }
+    }
+}
 
 // os pesos são as distancias entre nós
 
@@ -165,7 +171,7 @@ int main(int argc, char** argv){
     FILE* x = fopen(argv[1],"r");
     Data* y = read_data(x);
     Edge* b = make_edges(y);
-    Edge* necessary = malloc(sizeof(Edge)*(y->dimension-1));
+    Edge* mst = malloc(sizeof(Edge)*(y->dimension-1));
     //Ordena o vetor de aresta 'b' não-decrescentemente
     qsort(b,number_of_edges(y->dimension),sizeof(Edge),compar);
 
@@ -174,21 +180,21 @@ int main(int argc, char** argv){
     int index = 0;
     for(int i = 0; i < number_of_edges(y->dimension); i++){
         if(UF_union(b[i].x1, b[i].x2)){
-            necessary[index] = b[i];
+            mst[index] = b[i];
             index++;
             if(index == (y->dimension-1)) break;
         }
     }
 
-    print_mst(y, necessary);
+    print_mst(y, mst);
 
-    //tour(necessary,y->dimension-1);
+    tour(mst,y->dimension-1);
 
     //Libera toda a memória alocada no programa
     clear_data(y);
     quick_free();
     free(b);
-    free(necessary);
+    free(mst);
     fclose(x);
 
 
