@@ -164,6 +164,31 @@ void tour(Edge* x, int n){
     }
 }
 
+void tour2(Edge* x, int n){
+    Edge* m;      //Variável que receberá as arestas
+    Stack* st = create_Empty_Stack();
+    push(x,st);   //Insere a menor aresta na pilha
+    x->check = 1; //Coloca ela como checada;
+    int temp;     //int temporário, usado pra trocas;
+
+    while(!is_Empty_Stack(st)){
+        m = (Edge*)pop(st); //Pega a aresta analizada;
+        printf("->%d->%d", m->x1, m->x2);
+        for(int i = 0; i < n; i++){
+            if(x[i].check == 0 && (m->x1 == x[i].x1 || m->x2 == x[i].x1)) {
+                x[i].check = 1;
+                push(&x[i],st);
+            } else if(x[i].check == 0 && (m->x1 == x[i].x2 || m->x2 == x[i].x2)) {
+                temp = x[i].x1;
+                x[i].x1 = x[i].x2;
+                x[i].x2 = temp;
+                x[i].check = 1;
+                push(&x[i],st);
+            }
+        }
+    }
+}
+
 //versao alternativa da função de tour
 //só fiz separada pra não alterar a ideia tu estava colocando em pratica acima
 //obs: dps de printar até a cidade 161 corretamente erra mizeravelmente a prox. cidade antes de entrar em loop
