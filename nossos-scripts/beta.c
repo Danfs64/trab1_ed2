@@ -129,39 +129,59 @@ void print_mst(Data* data, Edge* nec) {
   fclose(arq);
 }
 
-int verified(Edge* x, int n){
-    for(int i = 0; i < n; i++){
-        if(x[i].check == 0){
-            return 0;
-        }
+void print_tour(Data* data, int* tr) {
+  char name[Default];
+  strcpy(name, "tour/");
+  strcat(name, data->name);
+  strcat(name, ".tour");
+  FILE* arq = fopen(name, "w+");
+
+  fprintf(arq, "NAME: %s\nTYPE: TOUR\nDIMENSION: %d\nTOUR_SECTION\n",
+                      data->name, data->dimension);
+
+  for (int i = 0; i < data->dimension; i++) {
+    fprintf(arq, "%d\n", tr[i]);
+  }
+  fprintf(arq, "EOF\n");
+
+  fclose(arq);
+}
+
+int find(int n,int *x,int elem){
+    for(int i = 0; i < n && x[i] != 0; i++){
+        if(x[i] == elem) return 1;
     }
-    return 1;
+    return 0;
 }
 
 //tour com as arestas ordenadas
-void tour(Edge* x, int n){
-    Edge* m;      //Variável que receberá as arestas
+int* tour(Edge* x, int n){
+    Edge* m;    //Variável que receberá as arestas
+    int *tr = malloc(sizeof(int)*(n+1)), index = 0;
     Stack* st = create_Empty_Stack();
-    push(x,st);   //Insere a menor aresta na pilha
-    x->check = 1; //Coloca ela como checada;
-    int temp;     //int temporário, usado pra trocas;
+    push(x,st); //Insere uma aresta arbitrária na pilha
 
-    while(!is_Empty_Stack(st)){
+     while(!is_Empty_Stack(st)){
         m = (Edge*)pop(st); //Pega a aresta analizada;
-        printf("->%d->%d", m->x1, m->x2);
+        m->check = 1;       //Coloca ela como checada;
+        if(!find(n+1,tr,m->x1)){
+            tr[index++] = m->x1;
+        }
+        if(!find(n+1,tr,m->x2)){
+            tr[index++] = m->x2;
+        }
+        //printf("%d -- %d\n\n\n", m->x1, m->x2);
         for(int i = 0; i < n; i++){
-            if(x[i].check == 0 && (m->x1 == x[i].x1 || m->x2 == x[i].x1)) {
-                x[i].check = 1;
-                push(&x[i],st);
-            } else if(x[i].check == 0 && (m->x1 == x[i].x2 || m->x2 == x[i].x2)) {
-                temp = x[i].x1;
-                x[i].x1 = x[i].x2;
-                x[i].x2 = temp;
-                x[i].check = 1;
+            //printf("%d -- %d; check = %d\n",x[i].x1, x[i].x2, x[i].check);
+            if(x[i].check == 0 && (m->x1 == x[i].x2 || m->x2 == x[i].x2 ||
+                                 m->x1 == x[i].x1 || m->x2 == x[i].x1) ) {
+
                 push(&x[i],st);
             }
         }
     }
+    free_Stack(st);
+    return tr;
 }
 
 void tour2(Edge* x, int n){
@@ -189,65 +209,6 @@ void tour2(Edge* x, int n){
     }
 }
 
-//versao alternativa da função de tour
-//só fiz separada pra não alterar a ideia tu estava colocando em pratica acima
-//obs: dps de printar até a cidade 161 corretamente erra mizeravelmente a prox. cidade antes de entrar em loop
-// void tr(Edge* x, int n){
-//     Edge* m;    //Variável que receberá as arestas
-//     // int id;     //Variável que armazenará a cidade "atual"
-//     Stack* st = create_Empty_Stack();
-//     printf("%d\n",x[0].x1);
-//     push(x,st); //Insere uma aresta arbitrária na pilha
-//     int last = x[0].x1;
-//     int d = 0;
-//
-//     while(!verified(x,n)){
-//         //int reverse = 1;
-//         if(!is_Empty_Stack(st)){
-//             m = (Edge*)pop(st);
-//             m->check = 1;
-//             if(last == m->x1){
-//                 printf("%d\n",m->x2);
-//                 last = m->x2;
-//             }else{
-//                 printf("%d\n",m->x1);
-//                 last = m->x1;
-//             }
-//         }
-//
-//         //alimenta a pilha com arestas cuja coordenada x1 é igual a ultima cidade visitada e que já não foram visitadas
-//         for(int i = 0; i < n; i++){
-//             if(last == x[i].x1 && x[0].check == 0){
-//                 push(&x[i],st);
-//                 //reverse = 0;
-//             }else if(last == x[i].x2 && x[i].check == 0){
-//                 push(&x[i],st);
-//             }else if(last == x[i].x2 && x[i].check == 1){
-//                 last = x[i].x1;
-//                 i = 0;
-//             }
-//         }
-//
-        //alimenta a pilha com arestas cuja coordenada x2 é igual a ultima cidade visitada
-        // if(reverse){
-        //     for(int i = 0; i < n; i++){
-        //         //caso a aresta ainda nao tenha sido visitada coloque na pilha,
-        //         //do contrario diga que a ultima cidade visitada é a cidade x1 da aresta que está sendo observada
-        //         if(last == x[i].x2 && x[i].check == 0){
-        //             push(&x[i],st);
-        //         }else if(last == x[i].x2 && x[i].check == 1){
-        //             last = x[i].x1;
-        //             i = 0;
-        //         }
-        //     }
-        // }
-        // if(d == 10){
-        //     break;
-        // }
-        // d++;
-    // }
-
-// }
 
 int main(int argc, char** argv){
     //Abre o arquivo e cria as estruturas necessárias inicialmente
@@ -255,7 +216,7 @@ int main(int argc, char** argv){
     Data* y = read_data(x);
     Edge* b = make_edges(y);
     Edge* mst = malloc(sizeof(Edge)*(y->dimension-1));
-    //Ordena o vetor de aresta 'b' não-decrescentemente
+    //Ordena o vetor de aresta 'b' crescentemente
     qsort(b,number_of_edges(y->dimension),sizeof(Edge),compar);
 
     UF_init(y->dimension);
@@ -271,12 +232,14 @@ int main(int argc, char** argv){
 
     print_mst(y, mst);
 
-    tour(mst,y->dimension-1);
-    // tr(mst,y->dimension-1);
+    int *tr = tour(mst,y->dimension-1);
+    print_tour(y,tr);
+
 
     //Libera toda a memória alocada no programa
     clear_data(y);
     quick_free();
+    free(tr);
     free(b);
     free(mst);
     fclose(x);

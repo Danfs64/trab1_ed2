@@ -39,7 +39,7 @@ int is_Empty_Stack(Stack* x){
     return x->head == NULL;
 }
 
-//TODO provavelmente precisará de callback, dependendo do o que for o *info
+//provavelmente precisará de callback, dependendo do o que for o *info
 void free_Stack(Stack* x){
     //Libera todos os nós ainda presentes na pilha
     while(!is_Empty_Stack(x)){
