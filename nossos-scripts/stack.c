@@ -10,14 +10,14 @@ struct stack{
 };
 
 Stack* create_Empty_Stack(){
-    Stack* x = malloc(sizeof(x));
+    Stack* x = malloc(sizeof(Stack));
     x->head = NULL;
 
     return x;
 }
 
 void push(void* x, Stack* y){
-    Node* m = malloc(sizeof(m));
+    Node* m = malloc(sizeof(Node));
     m->info = x;
     m->next = y->head;
 
