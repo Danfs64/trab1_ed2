@@ -149,7 +149,7 @@ void print_tour(Data* data, int* tr) {
 //tour com as arestas ordenadas
 int* tour(Edge* x, int n){
     Edge* m;    //Variável que receberá as arestas
-    int *tr = malloc(sizeof(int)*(n+1)), index = 0, *find = calloc(n+1,sizeof(int));
+    int *tr = malloc(sizeof(int)*(n+1)), index = 0, *find = calloc(n+1,sizeof(int*));
     Stack* st = create_Empty_Stack();
     push(x,st); //Insere uma aresta arbitrária na pilha
 
