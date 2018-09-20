@@ -147,28 +147,30 @@ void print_tour(Data* data, int* tr) {
   fclose(arq);
 }
 
-int find(int n,int *x,int elem){
-    for(int i = 0; i < n && x[i] != 0; i++){
-        if(x[i] == elem) return 1;
-    }
-    return 0;
-}
+// int find(int n,int *x,int elem){
+//     for(int i = 0; i < n && x[i] != 0; i++){
+//         if(x[i] == elem) return 1;
+//     }
+//     return 0;
+// }
 
 //tour com as arestas ordenadas
 int* tour(Edge* x, int n){
     Edge* m;    //Variável que receberá as arestas
-    int *tr = malloc(sizeof(int)*(n+1)), index = 0;
+    int *tr = malloc(sizeof(int)*(n+1)), index = 0, *find = calloc(n+1,sizeof(int));
     Stack* st = create_Empty_Stack();
     push(x,st); //Insere uma aresta arbitrária na pilha
 
      while(!is_Empty_Stack(st)){
         m = (Edge*)pop(st); //Pega a aresta analizada;
         m->check = 1;       //Coloca ela como checada;
-        if(!find(n+1,tr,m->x1)){
+        if(!find[m->x1]){
             tr[index++] = m->x1;
+            find[m->x1] = 1;
         }
-        if(!find(n+1,tr,m->x2)){
+        if(!find[m->x2]){
             tr[index++] = m->x2;
+            find[m->x2] = 1;
         }
         //printf("%d -- %d\n\n\n", m->x1, m->x2);
         for(int i = 0; i < n; i++){
@@ -180,6 +182,7 @@ int* tour(Edge* x, int n){
             }
         }
     }
+    free(find);
     free_Stack(st);
     return tr;
 }
