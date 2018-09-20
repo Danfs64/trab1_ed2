@@ -14,7 +14,6 @@ struct data{
 };
 //Estrutura que representa uma cidade, contem o id e as coordenadas
 struct city_node{
-    int id;
     float x, y;
 };
 //Estrutura que representa uma aresta da mst, com suas arestas e seu peso
@@ -36,8 +35,9 @@ Edge* make_edges(Data* x){
 
     for(int i = 0; i < (x->dimension - 1); i++){
         for(int j = i+1; j < x->dimension; j++){
-            y[index].x1 = x->node_coord_section[i]->id;
-            y[index].x2 = x->node_coord_section[j]->id;
+
+            y[index].x1 = i+1;
+            y[index].x2 = j+1;
             y[index].dist = distance(x->node_coord_section[i],x->node_coord_section[j]);
 
             y[index].check = 0;
@@ -48,10 +48,9 @@ Edge* make_edges(Data* x){
     return y;
 }
 //Cria um struct de cidade
-City* create_city(int id, int x, int y){
+City* create_city(int x, int y){
   City* b = malloc(sizeof(*b));
 
-  b->id = id;
   b->x = x;
   b->y = y;
 
@@ -72,7 +71,7 @@ Data* create_data(char* name, char* type, char* edge, int dimension, City** citi
 //Lê as informações do problema de um arquivo, gera e retorna o struct
 Data* read_data(FILE* archive){
     char trash[Default], name[Default], edge[Default], type[Default];
-    int dimension, id;
+    int dimension,id;
     float x, y;
     City** c;
 
@@ -91,8 +90,8 @@ Data* read_data(FILE* archive){
     c = malloc(sizeof(City*)*dimension);
     for(int i = 0; i < dimension; i++){
         fscanf(archive, "%d %f %f\n", &id, &x, &y);
-        c[i] = create_city(id,x,y);
-        //printf("%d %.2f %.2f\n",c[i]->id,c[i]->x,c[i]->y);
+        c[i] = create_city(x,y);
+
     }
 
     Data* a = create_data(name,type,edge,dimension,c);
@@ -217,6 +216,9 @@ int main(int argc, char** argv){
     //Abre o arquivo e cria as estruturas necessárias inicialmente
     FILE* x = fopen(argv[1],"r");
     Data* y = read_data(x);
+
+    fclose(x);
+
     Edge* b = make_edges(y);
     Edge* mst = malloc(sizeof(Edge)*(y->dimension-1));
     //Ordena o vetor de aresta 'b' crescentemente
@@ -232,6 +234,8 @@ int main(int argc, char** argv){
             if(index == (y->dimension-1)) break;
         }
     }
+    free(b);
+    quick_free();
 
     print_mst(y, mst);
 
@@ -241,12 +245,8 @@ int main(int argc, char** argv){
 
     //Libera toda a memória alocada no programa
     clear_data(y);
-    quick_free();
     free(tr);
-    free(b);
     free(mst);
-    fclose(x);
-
 
     return 0;
 }
