@@ -10,6 +10,8 @@
 *.la
 *.lo
 
-# Executável/saídas de teste
+# Executáveis/saídas de teste
 *trab1
+*.exe
 nossos-scripts/mst*
+nossos-scripts/tour
