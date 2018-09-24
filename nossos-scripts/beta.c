@@ -23,6 +23,28 @@ struct edge{
     int check;
 };
 
+typedef struct{
+    int id,color;
+    linked_list* adjacencies;
+}Adj;
+
+Adj* make_Adj(int n){
+    Adj* x = malloc(sizeof(Adj)*n);
+    for(int i = 0; i < n; i++){
+        x[i].id = i+1;
+        x[i].color = 0;
+        x[i].adjacencies = create_ll();
+    }
+    return x;
+}
+
+void free_Adj(Adj* x, int n){
+    for(int i = 0; i < n;i++){
+        free_ll(x[i].adjacencies);
+    }
+    free(x);
+}
+
 //Função de comparação para o quicksort
 static int compar(const void* x1, const void* x2){
   return ((Edge*)x1)->dist > ((Edge*)x2)->dist? 1:0;
@@ -191,18 +213,22 @@ int main(int argc, char** argv){
     //Ordena o vetor de aresta 'b' crescentemente
     qsort(b,number_of_edges(y->dimension),sizeof(Edge),compar);
 
-    UF_init(y->dimension);
+    UF* d = UF_init(y->dimension);
+    Adj* m = make_Adj(y->dimension);
 
     int index = 0;
     for(int i = 0; i < number_of_edges(y->dimension); i++){
-        if(UF_union(b[i].x1, b[i].x2)){
+        if(UF_union(b[i].x1, b[i].x2,d)){
+            add_data(m[b[i].x1 - 1].adjacencies, &m[b[i].x2 - 1]);
+            add_data(m[b[i].x2 - 1].adjacencies, &m[b[i].x1 - 1]);
             mst[index] = b[i];
             index++;
             if(index == (y->dimension-1)) break;
         }
     }
+
     free(b);
-    quick_free();
+    free_UF(d);
 
     print_mst(y, mst);
 

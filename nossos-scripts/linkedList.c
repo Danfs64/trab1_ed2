@@ -11,7 +11,7 @@ struct ll{
 };
 
 Node* create_node(){
-  Node* p =(Node*) malloc(sizeof(p));
+  Node* p =(Node*) malloc(sizeof(Node));
 
   p->info = NULL;
   p->next = NULL;
@@ -20,7 +20,7 @@ Node* create_node(){
 }
 
 linked_list* create_ll(){
-  linked_list* p =(linked_list*) malloc(sizeof(p));
+  linked_list* p =(linked_list*) malloc(sizeof(linked_list));
 
   p->head = NULL;
   p->tail = NULL;

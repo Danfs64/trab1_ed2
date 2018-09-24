@@ -2,8 +2,8 @@
 all: trab1 clean
 
 #Cria o executável usando os .o gerados
-trab1: beta.o quick.o stack.o
-	gcc -o trab1 beta.o quick.o stack.o -lm -g -Wall
+trab1: beta.o quick.o stack.o linkedList.o
+	gcc -o trab1 beta.o quick.o stack.o linkedList.o -lm -g -Wall
 
 #Gera os .o necessários
 beta.o: beta.c
@@ -14,6 +14,9 @@ quick.o: quick.c
 
 stack.o: stack.c
 	gcc -c stack.c -lm -g -Wall
+
+linkedList.o: linkedList.c
+	gcc -c linkedList.c -lm -g -Wall
 
 #Limpa todos os .o
 clean:
