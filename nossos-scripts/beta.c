@@ -20,7 +20,6 @@ struct city_node{
 struct edge{
     int x1, x2;
     int dist;
-    int check;
 };
 
 typedef struct{
@@ -55,15 +54,13 @@ Edge* make_edges(Data* x){
     int index = 0, h = number_of_edges(x->dimension);
     Edge* y = malloc(sizeof(Edge)*h);
 
+
     for(int i = 0; i < (x->dimension - 1); i++){
         for(int j = i+1; j < x->dimension; j++){
 
             y[index].x1 = i+1;
             y[index].x2 = j+1;
-            y[index].dist = distance(x->node_coord_section[i],x->node_coord_section[j]);
-
-            y[index].check = 0;
-            index++;
+            y[index++].dist = distance(x->node_coord_section[i],x->node_coord_section[j]);
         }
     }
 
@@ -168,38 +165,31 @@ void print_tour(Data* data, int* tr) {
   fclose(arq);
 }
 
-//tour com as arestas ordenadas
-int* tour(Edge* x, int n){
-    Edge* m;    //Variável que receberá as arestas
-    int *tr = malloc(sizeof(int)*(n+1)), index = 0, *find = calloc(n+1,sizeof(int*));
-    Stack* st = create_Empty_Stack();
-    push(x,st); //Insere uma aresta arbitrária na pilha
-
-     while(!is_Empty_Stack(st)){
-        m = (Edge*)pop(st); //Pega a aresta analizada;
-        m->check = 1;       //Coloca ela como checada;
-        if(!find[m->x1]){
-            tr[index++] = m->x1;
-            find[m->x1] = 1;
-        }
-        if(!find[m->x2]){
-            tr[index++] = m->x2;
-            find[m->x2] = 1;
-        }
-
-        for(int i = 0; i < n; i++){
-
-            if(x[i].check == 0 && (m->x1 == x[i].x2 || m->x2 == x[i].x2 ||
-                                 m->x1 == x[i].x1 || m->x2 == x[i].x1) ) {
-
-                push(&x[i],st);
-            }
-        }
+void* visit(void* data,void* stack){
+    if(((Adj*)data)->color == 0){
+        push(data,(Stack*)stack);
     }
-    free(find);
+    return NULL;
+}
+
+int* tour(Adj* x, int n){
+    int* tr = malloc(sizeof(int)*n);
+    Stack* st = create_Empty_Stack();
+    push(x,st);
+    int index = 0;
+
+    while (!is_Empty_Stack(st)) {
+        Adj* m = (Adj*)pop(st);
+        m->color = 1;
+        //printf("%d\n",index);
+        tr[index++] = m->id;
+        traverse(m->adjacencies,visit,st);
+    }
+
     free_Stack(st);
     return tr;
 }
+
 
 int main(int argc, char** argv){
     //Abre o arquivo e cria as estruturas necessárias inicialmente
@@ -221,8 +211,7 @@ int main(int argc, char** argv){
         if(UF_union(b[i].x1, b[i].x2,d)){
             add_data(m[b[i].x1 - 1].adjacencies, &m[b[i].x2 - 1]);
             add_data(m[b[i].x2 - 1].adjacencies, &m[b[i].x1 - 1]);
-            mst[index] = b[i];
-            index++;
+            mst[index++] = b[i];
             if(index == (y->dimension-1)) break;
         }
     }
@@ -232,11 +221,12 @@ int main(int argc, char** argv){
 
     print_mst(y, mst);
 
-    int *tr = tour(mst,y->dimension-1);
+    int *tr = tour(m,y->dimension);
     print_tour(y,tr);
 
 
     //Libera toda a memória alocada no programa
+    free_Adj(m,y->dimension);
     clear_data(y);
     free(tr);
     free(mst);
