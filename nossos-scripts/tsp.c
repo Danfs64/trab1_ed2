@@ -1,4 +1,4 @@
-#include "beta.h"
+#include "tsp.h"
 
 #define distance(v1,v2) round(sqrt(pow((v2->x - v1->x),2) + pow((v2->y - v1->y),2)))
 #define number_of_edges(n) ((n/2)*(n-1))+(((n-1)/2)*((n%2) != 0))
@@ -46,7 +46,7 @@ void free_Adj(Adj* x, int n){
 
 //Função de comparação para o quicksort
 static int compar(const void* x1, const void* x2){
-  return ((Edge*)x1)->dist > ((Edge*)x2)->dist? 1:0;
+    return ((Edge*)x1)->dist > ((Edge*)x2)->dist? 1:0;
 }
 
 //Gera o vetor com todas as aresta possíveis de um problema
@@ -68,12 +68,12 @@ Edge* make_edges(Data* x){
 }
 //Cria um struct de cidade
 City* create_city(int x, int y){
-  City* b = malloc(sizeof(*b));
+    City* b = malloc(sizeof(*b));
 
-  b->x = x;
-  b->y = y;
+    b->x = x;
+    b->y = y;
 
-  return b;
+    return b;
 }
 //Cria o struct principal do problema
 Data* create_data(char* name, char* type, char* edge, int dimension, City** cities){
@@ -119,50 +119,50 @@ Data* read_data(FILE* archive){
 }
 //Libera toda a memória usada por um Data
 Data* clear_data(Data* data) {
-  for (int i = 0; i < data->dimension; i++) {
-    free(data->node_coord_section[i]);
-  }
-  free(data->node_coord_section);
-  free(data->name);
-  free(data);
+    for (int i = 0; i < data->dimension; i++) {
+        free(data->node_coord_section[i]);
+    }
+    free(data->node_coord_section);
+    free(data->name);
+    free(data);
 
-  return NULL;
+    return NULL;
 }
 //Cria um arquivo de saída com a MST
 void print_mst(Data* data, Edge* nec) {
-  char name[Default];
-  strcpy(name, "mst/");
-  strcat(name, data->name);
-  strcat(name, ".mst");
-  FILE* arq = fopen(name, "w+");
+    char name[Default];
+    strcpy(name, "mst/");
+    strcat(name, data->name);
+    strcat(name, ".mst");
+    FILE* arq = fopen(name, "w+");
 
-  fprintf(arq, "NAME: %s\nTYPE: MST\nDIMENSION: %d\nMST_SECTION\n",
-                      data->name, data->dimension);
+    fprintf(arq, "NAME: %s\nTYPE: MST\nDIMENSION: %d\nMST_SECTION\n",
+            data->name, data->dimension);
 
-  for (int i = 0; i < data->dimension-1; i++) {
-    fprintf(arq, "%d %d\n", nec[i].x1, nec[i].x2);
-  }
-  fprintf(arq, "EOF\n");
+    for (int i = 0; i < data->dimension-1; i++) {
+        fprintf(arq, "%d %d\n", nec[i].x1, nec[i].x2);
+    }
+    fprintf(arq, "EOF\n");
 
-  fclose(arq);
+    fclose(arq);
 }
 
 void print_tour(Data* data, int* tr) {
-  char name[Default];
-  strcpy(name, "tour/");
-  strcat(name, data->name);
-  strcat(name, ".tour");
-  FILE* arq = fopen(name, "w+");
+    char name[Default];
+    strcpy(name, "tour/");
+    strcat(name, data->name);
+    strcat(name, ".tour");
+    FILE* arq = fopen(name, "w+");
 
-  fprintf(arq, "NAME: %s\nTYPE: TOUR\nDIMENSION: %d\nTOUR_SECTION\n",
-                      data->name, data->dimension);
+    fprintf(arq, "NAME: %s\nTYPE: TOUR\nDIMENSION: %d\nTOUR_SECTION\n",
+            data->name, data->dimension);
 
-  for (int i = 0; i < data->dimension; i++) {
-    fprintf(arq, "%d\n", tr[i]);
-  }
-  fprintf(arq, "EOF\n");
+    for (int i = 0; i < data->dimension; i++) {
+        fprintf(arq, "%d\n", tr[i]);
+    }
+    fprintf(arq, "EOF\n");
 
-  fclose(arq);
+    fclose(arq);
 }
 
 void* visit(void* data,void* stack){
@@ -195,9 +195,10 @@ int main(int argc, char** argv){
     //Abre o arquivo e cria as estruturas necessárias inicialmente
     FILE* x = fopen(argv[1],"r");
     Data* y = read_data(x);
-
+    //Fecha o arquivo de entrada
     fclose(x);
 
+    //Cria os vetores necessários pra geração da mst
     Edge* b = make_edges(y);
     Edge* mst = malloc(sizeof(Edge)*(y->dimension-1));
     //Ordena o vetor de aresta 'b' crescentemente
@@ -215,17 +216,17 @@ int main(int argc, char** argv){
             if(index == (y->dimension-1)) break;
         }
     }
-
+    //Libera (a maior) parte da memória alocada no programa, que não é mais necessária
     free(b);
     free_UF(d);
-
+    //Gera o arquivo de saída de mst
     print_mst(y, mst);
-
+    //Gera o vetor do tour e gera o arquivo de saida do tour
     int *tr = tour(m,y->dimension);
     print_tour(y,tr);
 
 
-    //Libera toda a memória alocada no programa
+    //Libera todo o resto da memória alocada no programa
     free_Adj(m,y->dimension);
     clear_data(y);
     free(tr);
