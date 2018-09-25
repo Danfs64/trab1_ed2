@@ -59,7 +59,6 @@ Edge* make_edges(Data* x){
     int index = 0, h = number_of_edges(x->dimension);
     Edge* y = malloc(sizeof(Edge)*h);
 
-
     for(int i = 0; i < (x->dimension - 1); i++){
         for(int j = i+1; j < x->dimension; j++){
 
@@ -68,7 +67,6 @@ Edge* make_edges(Data* x){
             y[index++].dist = distance(x->node_coord_section[i],x->node_coord_section[j]);
         }
     }
-
     return y;
 }
 //Cria um struct de cidade
@@ -186,7 +184,6 @@ int* tour(Adj* x, int n){
     while (!is_Empty_Stack(st)) {
         Adj* m = (Adj*)pop(st);
         m->color = 1;
-        //printf("%d\n",index);
         tr[index++] = m->id;
         traverse(m->adjacencies,visit,st);
     }
@@ -197,16 +194,16 @@ int* tour(Adj* x, int n){
 
 int main(int argc, char** argv){
     //Abre o arquivo e cria as estruturas necessárias inicialmente
-    FILE* x = fopen(argv[1],"r");
-    Data* y = read_data(x);
+    FILE* input = fopen(argv[1],"r");
+    Data* y = read_data(input);
     //Fecha o arquivo de entrada
-    fclose(x);
+    fclose(input);
 
     //Cria os vetores necessários pra geração da mst
-    Edge* b = make_edges(y);
-    Edge* mst = malloc(sizeof(Edge)*(y->dimension-1));
-    //Ordena o vetor de aresta 'b' crescentemente
-    qsort(b,number_of_edges(y->dimension),sizeof(Edge),compar);
+    Edge* all = make_edges(y);                          //Vetor de todas as arestas
+    Edge* mst = malloc(sizeof(Edge)*(y->dimension-1));  //Vetor das arestas da mst
+    //Ordena o vetor de aresta 'all' crescentemente
+    qsort(all,number_of_edges(y->dimension),sizeof(Edge),compar);
 
     //Estrutura do Union-Find
     UF* d = UF_init(y->dimension);
@@ -216,19 +213,21 @@ int main(int argc, char** argv){
     int index = 0;
 
     //Abaixo a MST é formada
+    //O for irá rodar até ele finalizar: ou o vetor da mst, ou o vetor de todas as arestas existentes
     //O if é satisfeito quando as duas cidades daquele arco foram conectadas
-    //Para cada vez que o if é satisfeito o arco é adicionado no vetor da mst e cada cidade tem sua adjacente acrescentada a lista
+    //Para cada vez que o if é satisfeito cada cidade tem sua adjacente acrescentada a lista e o arco é adicionado no vetor da mst
     for(int i = 0; i < number_of_edges(y->dimension) && index < (y->dimension-1); i++){
-        if(UF_union(b[i].x1, b[i].x2,d)){
-            add_data(m[b[i].x1 - 1].adjacencies, &m[b[i].x2 - 1]);
-            add_data(m[b[i].x2 - 1].adjacencies, &m[b[i].x1 - 1]);
-            mst[index++] = b[i];
+        if(UF_union(all[i].x1, all[i].x2,d)){
+            add_data(m[all[i].x1 - 1].adjacencies, &m[all[i].x2 - 1]);
+            add_data(m[all[i].x2 - 1].adjacencies, &m[all[i].x1 - 1]);
+            mst[index++] = all[i];
         }
     }
 
     //Libera (a maior) parte da memória alocada no programa, que não é mais necessária
-    free(b);
-    free_UF(d);
+    free(all);  //Vetor de todas as arestas
+    free_UF(d); //Vetores usados no Union_Find
+
     //Gera o arquivo de saída de mst
     print_mst(y, mst);
     //Gera o vetor do tour e gera o arquivo de saida do tour
@@ -236,10 +235,10 @@ int main(int argc, char** argv){
     print_tour(y,tr);
 
     //Libera todo o resto da memória alocada no programa
-    free_Adj(m,y->dimension);
-    clear_data(y);
-    free(tr);
-    free(mst);
+    free_Adj(m,y->dimension);   //Vetor de listas de adjacência
+    clear_data(y);              //Vetor de informações do problema
+    free(mst);                  //Vetor da mst
+    free(tr);                   //Vetor do tour
 
     return 0;
 }

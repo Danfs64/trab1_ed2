@@ -21,9 +21,10 @@ linkedList.o: linkedList.c
 #Processo de compilação com a tag -O2 pra otimização
 otim: execo clean
 
-execo: beta.o2 quick.o2 stack.o2 linkedList.o2
+execo: tsp.o2 quick.o2 stack.o2 linkedList.o2
 	gcc -O2 -o trab1 tsp.o quick.o stack.o linkedList.o -lm -g -Wall
-beta.o2: tsp.c
+
+tsp.o2: tsp.c
 	gcc -O2 -c tsp.c -lm -g -Wall
 
 quick.o2: quick.c
@@ -42,10 +43,6 @@ clean:
 #Roda o programa com o exemplo berlin52.tsp
 run: trab1 clean
 	./trab1 in/berlin52.tsp
-
-#Roda o programa com o teste simples danfs5.tsp
-run2: trab1 clean
-	./trab1 in/danfs5.tsp
 
 #Roda o programa com o maior caso, o d18512.tsp
 run3: trab1 clean
