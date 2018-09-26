@@ -46,14 +46,14 @@ int main(int argc, char** argv){
     fclose(input);
 
     //Cria os vetores necessários pra geração da mst
-    Edge* edges = make_edges(y);                          //Vetor de todas as arestas
+    Edge* edges = make_edges(y);                        //Vetor de todas as arestas
     Edge* mst = malloc(sizeof(Edge)*(y->dimension-1));  //Vetor das arestas da mst
     //Ordena o vetor de aresta 'all' crescentemente
     qsort(edges,number_of_edges(y->dimension),sizeof(Edge),compar);
 
     UF* d = UF_init(y->dimension);  //Estrutura do Union-Find
     Adj* m = make_Adj(y->dimension);//Vetor de Estrutura de adjacencias
-    int index = 0, mst_Weight = 0;                  //Indice do vetor de arcos que geram a mst
+    int index = 0, mst_Weight = 0;  //Indice do vetor da mst e peso da mst
 
     //Abaixo a MST é formada
     //O for irá rodar até ele finalizar: ou o vetor da mst, ou o vetor de todas as arestas existentes
@@ -231,7 +231,7 @@ int* tour(Adj* x, int n, City** b, int* dist){
     int* tr = malloc(sizeof(int)*n);
     Stack* st = create_Empty_Stack();
     push(x,st);
-    int lastVisited = x->id;
+    int firstVisited = lastVisited = x->id;
     int index = 0;
     *dist = 0;
 
@@ -243,6 +243,7 @@ int* tour(Adj* x, int n, City** b, int* dist){
         lastVisited = m->id;
         traverse(m->adjacencies,visit,st);
     }
+    *dist += distance(b[lastVisited-1], b[firstVisited-1]);
 
     free_Stack(st);
     return tr;
