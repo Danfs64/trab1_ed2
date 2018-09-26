@@ -231,7 +231,8 @@ int* tour(Adj* x, int n, City** b, int* dist){
     int* tr = malloc(sizeof(int)*n);
     Stack* st = create_Empty_Stack();
     push(x,st);
-    int firstVisited = lastVisited = x->id;
+    int firstVisited = x->id;
+    int lastVisited = x->id;
     int index = 0;
     *dist = 0;
 
