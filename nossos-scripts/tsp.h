@@ -42,4 +42,4 @@ void print_tour(Data* data, int* tr);
 void* visit(void* data,void* stack);
 
 //Tour baseado em busca em profundidade em grafos
-int* tour(Adj* x, int n);
+int* tour(Adj* x, int n, City** b, int* dist);

@@ -28,8 +28,8 @@ struct adj{
 
 //Calculo das distancias entre cidades
 static int distance(City* v1, City* v2){
-    int x = pow((v2->x - v1->x),2);
-    int y = pow((v2->y - v1->y),2);
+    float x = pow((v2->x - v1->x),2);
+    float y = pow((v2->y - v1->y),2);
 
     return round(sqrt(x+y));
 }
@@ -73,9 +73,12 @@ int main(int argc, char** argv){
 
     //Gera o arquivo de saída de mst
     print_mst(y, mst);
+    //Tamanho do tour gerado pela MST
+    int dist;
     //Gera o vetor do tour e gera o arquivo de saida do tour
-    int *tr = tour(m,y->dimension);
+    int *tr = tour(m,y->dimension,y->node_coord_section,&dist);
     print_tour(y,tr);
+    printf("Tamanho do Tour: %d\n",dist);
 
     //Libera todo o resto da memória alocada no programa
     free_Adj(m,y->dimension);   //Vetor de listas de adjacência
@@ -223,16 +226,20 @@ void* visit(void* data,void* stack){
     return NULL;
 }
 
-int* tour(Adj* x, int n){
+int* tour(Adj* x, int n, City** b, int* dist){
     int* tr = malloc(sizeof(int)*n);
     Stack* st = create_Empty_Stack();
     push(x,st);
+    int lastVisited = x->id;
     int index = 0;
+    *dist = 0;
 
     while (!is_Empty_Stack(st)) {
         Adj* m = (Adj*)pop(st);
         m->color = 1;
         tr[index++] = m->id;
+        *dist += distance(b[lastVisited-1],b[m->id-1]);
+        lastVisited = m->id;
         traverse(m->adjacencies,visit,st);
     }
 
