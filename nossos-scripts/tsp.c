@@ -53,7 +53,7 @@ int main(int argc, char** argv){
 
     UF* d = UF_init(y->dimension);  //Estrutura do Union-Find
     Adj* m = make_Adj(y->dimension);//Vetor de Estrutura de adjacencias
-    int index = 0;                  //Indice do vetor de arcos que geram a mst
+    int index = 0, mst_Weight = 0;                  //Indice do vetor de arcos que geram a mst
 
     //Abaixo a MST é formada
     //O for irá rodar até ele finalizar: ou o vetor da mst, ou o vetor de todas as arestas existentes
@@ -64,6 +64,7 @@ int main(int argc, char** argv){
             add_data(m[edges[i].x1 - 1].adjacencies, &m[edges[i].x2 - 1]);
             add_data(m[edges[i].x2 - 1].adjacencies, &m[edges[i].x1 - 1]);
             mst[index++] = edges[i];
+            mst_Weight += edges[i].dist;
         }
     }
 
@@ -78,7 +79,7 @@ int main(int argc, char** argv){
     //Gera o vetor do tour e gera o arquivo de saida do tour
     int *tr = tour(m,y->dimension,y->node_coord_section,&dist);
     print_tour(y,tr);
-    printf("Tamanho do Tour: %d\n",dist);
+    printf("Tamanho do Tour: %d\nMST Weight: %d\n",dist,mst_Weight);
 
     //Libera todo o resto da memória alocada no programa
     free_Adj(m,y->dimension);   //Vetor de listas de adjacência
