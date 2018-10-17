@@ -164,11 +164,13 @@ Data* create_data(char* name, char* type, char* edge, int dimension, City** citi
     return x;
 }
 
-City* create_city(int x, int y){
+City* create_city(float x, float y){
     City* b = malloc(sizeof(*b));
 
     b->x = x;
     b->y = y;
+
+    printf("x %f, y %f\n", x, y);
 
     return b;
 }

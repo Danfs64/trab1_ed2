@@ -27,7 +27,7 @@ Data* read_data(FILE* archive);
 Data* create_data(char* name, char* type, char* edge, int dimension, City** cities);
 
 //Cria um struct de cidade
-City* create_city(int x, int y);
+City* create_city(float x, float y);
 
 //Libera toda a memória usada por um Data
 Data* clear_data(Data* data);

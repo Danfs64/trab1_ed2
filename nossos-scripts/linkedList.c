@@ -71,7 +71,7 @@ void* traverse(linked_list *list, void*(*func)(void*,void*), void* generico){
   }
   Node* p = list->head;
   void* r = NULL;
-  for(p ; p!=NULL ;p = p->next){
+  for( ; p!=NULL ;p = p->next){
     r=func(p->info,generico);
     if(r != NULL){
       return r;
@@ -93,7 +93,7 @@ void* remove_data(linked_list* linked_list, void* data){
     x = p->info;
     free(p);
   }else{
-    for(p; p != NULL && p->info != data; p = p->next){
+    for( ; p != NULL && p->info != data; p = p->next){
       ant = p;
     }
     ant->next = p->next;
